@@ -1,11 +1,10 @@
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 public class WeatherFrame extends JFrame {
 
@@ -26,6 +25,9 @@ public class WeatherFrame extends JFrame {
     int topPanelHeight;
     int bottomPanelHeight;
 
+    // Engine
+    Engine engine = new Engine();
+
 
     public WeatherFrame(){
         initSettings();
@@ -34,7 +36,7 @@ public class WeatherFrame extends JFrame {
     }
 
     public void initSettings(){
-        setSize(350,550);
+        setSize(350,190);
         setLocationRelativeTo(null);
         setLayout(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -69,13 +71,6 @@ public class WeatherFrame extends JFrame {
                 cityLabel.getPreferredSize().height
         );
 
-//        cityLabel.setBounds(
-//                getWidth()/2-cityLabel.getPreferredSize().width/2-5,
-//                topPanelHeight/2-30,
-//                cityLabel.getPreferredSize().width+5,
-//                cityLabel.getPreferredSize().height
-//        );
-//        topPanel.add(cityLabel);
         initInputPanel();
         topPanel.add(cityLabel);
         topPanel.add(inputPanel);
@@ -87,10 +82,10 @@ public class WeatherFrame extends JFrame {
         bottomPanel.setLayout(null);
         bottomPanel.setBackground(new Color(53,47,68));
 
-        weatherLabel = new JLabel("test");
-        weatherLabel.setFont(new Font("Monospaced", Font.BOLD,14));
-        weatherLabel.setForeground(Color.white);
-        weatherLabel.setBounds(15,270,getWidth()-20,bottomPanelHeight-20);
+        weatherLabel = new JLabel();
+        weatherLabel.setFont(new Font("Arial", Font.PLAIN,14));
+        weatherLabel.setForeground(new Color(250, 240, 230));
+        weatherLabel.setBounds(10,10,200,bottomPanelHeight-55);
         weatherLabel.setHorizontalAlignment(JLabel.LEFT);
         weatherLabel.setVerticalAlignment(JLabel.TOP);
 
@@ -141,10 +136,14 @@ public class WeatherFrame extends JFrame {
             }
         });
         inputButton.addActionListener(e -> {
-            System.out.println(
-                    inputField.getText()
-            );
-            weatherLabel.setText(inputField.getText());
+            String city = inputField.getText();
+            String info;
+            try {
+                info = engine.getInfo(city);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+            weatherLabel.setText(info);
         });
 
         inputPanel.add(inputField);
