@@ -76,10 +76,12 @@ public class Engine {
                 .get("description")
                 .toString();
         String description = weather_description.substring(0,1).toUpperCase()+weather_description.substring(1);
-
+        String city_name = weatherObject
+                .get("name")
+                .toString();
         String result = "";
         if(lang == "en") {
-            result = "<html><font size=5><b>" + city +
+            result = "<html><font size=5><b>" + city_name +
                     "</b></font><br/>" + description +
                     "<br/>Temperature: " + temp +
                     "°C<br/><font color=#A69D94>Min: " + temp_min +
@@ -89,7 +91,7 @@ public class Engine {
                     " km/h<br/>Pressure: " + pressure +
                     " hPa</html>";
         } else {
-            result = "<html><font size=5><b>" + city +
+            result = "<html><font size=5><b>" + city_name +
                     "</b></font><br/>" + description +
                     "<br/>Temperatura: " + temp +
                     "°C<br/><font color=#A69D94>Min: " + temp_min +

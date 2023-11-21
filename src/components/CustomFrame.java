@@ -4,37 +4,39 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.net.URL;
+import java.util.Objects;
 
 import utilities.Engine;
 
 public class CustomFrame extends JFrame {
 
     // Top Panel
-    JPanel topPanel;
-    JLabel cityLabel;
+    private JPanel topPanel;
+    private JLabel cityLabel;
 
     // Input Panel
-    JPanel inputPanel;
-    JTextField inputField;
-    JButton inputButton;
-    JButton buttonPL;
-    JButton buttonEN;
+    private JPanel inputPanel;
+    private JTextField inputField;
+    private JButton inputButton;
+    private JButton buttonPL;
+    private JButton buttonEN;
 
     // Bottom Panel
-    JPanel bottomPanel;
-    JLabel weatherLabel;
+    private JPanel bottomPanel;
+    private JLabel weatherLabel;
 
     // Height variables
-    int topPanelHeight;
-    int bottomPanelHeight;
+    private int topPanelHeight;
+    private int bottomPanelHeight;
 
     // utilities.Engine
-    Engine engine = new Engine();
+    private final Engine engine = new Engine();
 
-    URL iconURL = getClass().getResource("/Resources/icon.png");
-    ImageIcon img = new ImageIcon(iconURL);
+    private final URL iconURL = getClass().getResource("/Resources/icon.png");
+    private final ImageIcon img = new ImageIcon(iconURL);
 
-    String lang = "en";
+    private String lang = "en";
+    private String userCity = null;
 
     private final Color linenColor = new Color(250,240,230);
     private final Color lightBlueColor = new Color(92,84,112);
@@ -80,12 +82,13 @@ public class CustomFrame extends JFrame {
 
 
         cityLabel = new JLabel("Search city");
+        cityLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         cityLabel.setFont(new Font("Arial", Font.PLAIN,16));
         cityLabel.setForeground(linenColor);
         cityLabel.setBounds(
+                10,
                 20,
-                20,
-                cityLabel.getPreferredSize().width+5,
+                cityLabel.getPreferredSize().width+25,
                 cityLabel.getPreferredSize().height
         );
 
@@ -100,19 +103,33 @@ public class CustomFrame extends JFrame {
         bottomPanel.setLayout(null);
         bottomPanel.setBackground(darkBlueColor);
 
-        buttonPL = new CustomButton("PL", lightBlueColor, darkerBlueColor);
-        buttonPL.setBounds(5, 5, 50, 20);
-        buttonPL.addActionListener(e -> lang = "pl");
-        buttonEN = new CustomButton("EN", lightBlueColor, darkerBlueColor);
-        buttonEN.setBounds(60, 5, 50, 20);
-        buttonPL.addActionListener(e -> lang = "en");
-
         String defaultInfo;
         try {
             defaultInfo = engine.getInfo("Warsaw", lang);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+
+        buttonPL = new CustomButton("PL", lightBlueColor, darkerBlueColor);
+        buttonPL.setBounds(5, 5, 50, 20);
+        // Zmiana na polski
+        buttonPL.addActionListener(e -> {
+            lang = "pl";
+            cityLabel.setText("Wpisz miasto");
+            inputButton.setText("Szukaj");
+            setInfo(Objects.requireNonNullElse(userCity, "Warsaw"));
+        });
+        buttonEN = new CustomButton("EN", lightBlueColor, darkerBlueColor);
+        buttonEN.setBounds(60, 5, 50, 20);
+        // Zmiana na angielski
+        buttonEN.addActionListener(e -> {
+            lang = "en";
+            cityLabel.setText("Search city");
+            inputButton.setText("Search");
+            setInfo(Objects.requireNonNullElse(userCity, "Warsaw"));
+
+        });
+
         weatherLabel = new JLabel(defaultInfo);
         weatherLabel.setFont(new Font("Arial", Font.PLAIN,14));
         weatherLabel.setForeground(linenColor);
@@ -126,32 +143,36 @@ public class CustomFrame extends JFrame {
 
     public void initInputPanel(){
         inputPanel = new JPanel();
-        inputPanel.setBounds(cityLabel.getWidth()+30, 15, 200,30);
-//        inputPanel.setBounds(getWidth()/2-100, topPanelHeight/2, 200,30);
+        inputPanel.setBounds(cityLabel.getWidth()+30, 15, 180,30);
         inputPanel.setLayout(null);
         inputPanel.setBackground(darkBlueColor);
 
-        inputField = new JTextField(20);
-        inputField.setBounds(1,1,129,28);
-        inputField.setBackground(new Color(250,240,230));
+        inputField = new JTextField();
+        inputField.setBounds(1,1,109,28);
+        inputField.setBackground(linenColor);
         inputField.setBorder(new EmptyBorder(0,5,0,5));
         inputField.setForeground(new Color(26,47,68));
 
         inputButton = new CustomButton("Search", darkBlueColor, darkestBlueColor);
-        inputButton.setBounds(130,0,70,30);
+        inputButton.setBounds(110,0,70,30);
         inputButton.addActionListener(e -> {
-            String city = inputField.getText();
-            String info;
-            try {
-                info = engine.getInfo(city, lang);
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-            weatherLabel.setText(info);
+            userCity = inputField.getText();
+            setInfo(userCity);
         });
 
         inputPanel.add(inputField);
         inputPanel.add(inputButton);
+    }
+
+    public void setInfo(String city){
+
+        String info;
+        try {
+            info = engine.getInfo(city, lang);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        weatherLabel.setText(info);
     }
 
 }
