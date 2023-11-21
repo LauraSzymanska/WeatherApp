@@ -79,7 +79,8 @@ public class Engine {
 
         String result = "";
         if(lang == "en") {
-            result = "<html>" + description +
+            result = "<html><font size=5><b>" + city +
+                    "</b></font><br/>" + description +
                     "<br/>Temperature: " + temp +
                     "°C<br/><font color=#A69D94>Min: " + temp_min +
                     "°C Max: " + temp_max +
@@ -88,7 +89,8 @@ public class Engine {
                     " km/h<br/>Pressure: " + pressure +
                     " hPa</html>";
         } else {
-            result = "<html>" + description +
+            result = "<html><font size=5><b>" + city +
+                    "</b></font><br/>" + description +
                     "<br/>Temperatura: " + temp +
                     "°C<br/><font color=#A69D94>Min: " + temp_min +
                     "°C Maks: " + temp_max +

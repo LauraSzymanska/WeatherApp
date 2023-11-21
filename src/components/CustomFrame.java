@@ -36,6 +36,15 @@ public class CustomFrame extends JFrame {
 
     String lang = "en";
 
+    private final Color linenColor = new Color(250,240,230);
+    private final Color lightBlueColor = new Color(92,84,112);
+    private final Color darkBlueColor = new Color(53,47,68);
+
+    private final Color darkerBlueColor = new Color(73,67,89);
+    private final Color darkestBlueColor = new Color(41,37,53);
+
+
+
 
     public CustomFrame(){
         initSettings();
@@ -45,7 +54,7 @@ public class CustomFrame extends JFrame {
 
     public void initSettings(){
         setIconImage(img.getImage());
-        setSize(350,250);
+        setSize(350,270);
         setLocationRelativeTo(null);
         setLayout(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -67,12 +76,12 @@ public class CustomFrame extends JFrame {
         topPanel = new JPanel();
         topPanel.setBounds(0,0,getWidth(),topPanelHeight);
         topPanel.setLayout(null);
-        topPanel.setBackground(new Color(92,84,112));
+        topPanel.setBackground(lightBlueColor);
 
 
         cityLabel = new JLabel("Search city");
         cityLabel.setFont(new Font("Arial", Font.PLAIN,16));
-        cityLabel.setForeground(new Color(250,240,230));
+        cityLabel.setForeground(linenColor);
         cityLabel.setBounds(
                 20,
                 20,
@@ -89,18 +98,24 @@ public class CustomFrame extends JFrame {
         bottomPanel = new JPanel();
         bottomPanel.setBounds(0,topPanelHeight, getWidth(),bottomPanelHeight);
         bottomPanel.setLayout(null);
-        bottomPanel.setBackground(new Color(53,47,68));
+        bottomPanel.setBackground(darkBlueColor);
 
-        buttonPL = new CustomButton("PL", new Color(92,84,112), new Color(73,67,89));
+        buttonPL = new CustomButton("PL", lightBlueColor, darkerBlueColor);
         buttonPL.setBounds(5, 5, 50, 20);
         buttonPL.addActionListener(e -> lang = "pl");
-        buttonEN = new CustomButton("EN", new Color(92,84,112), new Color(73,67,89));
+        buttonEN = new CustomButton("EN", lightBlueColor, darkerBlueColor);
         buttonEN.setBounds(60, 5, 50, 20);
         buttonPL.addActionListener(e -> lang = "en");
 
-        weatherLabel = new JLabel();
+        String defaultInfo;
+        try {
+            defaultInfo = engine.getInfo("Warsaw", lang);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        weatherLabel = new JLabel(defaultInfo);
         weatherLabel.setFont(new Font("Arial", Font.PLAIN,14));
-        weatherLabel.setForeground(new Color(250, 240, 230));
+        weatherLabel.setForeground(linenColor);
         weatherLabel.setBounds(10,35,200,bottomPanelHeight-55);
         weatherLabel.setHorizontalAlignment(JLabel.LEFT);
         weatherLabel.setVerticalAlignment(JLabel.TOP);
@@ -114,7 +129,7 @@ public class CustomFrame extends JFrame {
         inputPanel.setBounds(cityLabel.getWidth()+30, 15, 200,30);
 //        inputPanel.setBounds(getWidth()/2-100, topPanelHeight/2, 200,30);
         inputPanel.setLayout(null);
-        inputPanel.setBackground(new Color(53,47,68));
+        inputPanel.setBackground(darkBlueColor);
 
         inputField = new JTextField(20);
         inputField.setBounds(1,1,129,28);
@@ -122,7 +137,7 @@ public class CustomFrame extends JFrame {
         inputField.setBorder(new EmptyBorder(0,5,0,5));
         inputField.setForeground(new Color(26,47,68));
 
-        inputButton = new CustomButton("Search", new Color(53,47,68), new Color(41,37,53));
+        inputButton = new CustomButton("Search", darkBlueColor, darkestBlueColor);
         inputButton.setBounds(130,0,70,30);
         inputButton.addActionListener(e -> {
             String city = inputField.getText();
