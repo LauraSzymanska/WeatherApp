@@ -1,7 +1,8 @@
+import components.CustomFrame;
 
 public class Main {
     public static void main(String[] args) {
-        WeatherFrame Weather = new WeatherFrame(){};
+        CustomFrame Weather = new CustomFrame(){};
 
     }
 }

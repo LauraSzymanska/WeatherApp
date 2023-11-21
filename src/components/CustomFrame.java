@@ -1,12 +1,13 @@
+package components;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
+import java.net.URL;
 
-public class WeatherFrame extends JFrame {
+import utilities.Engine;
+
+public class CustomFrame extends JFrame {
 
     // Top Panel
     JPanel topPanel;
@@ -16,6 +17,8 @@ public class WeatherFrame extends JFrame {
     JPanel inputPanel;
     JTextField inputField;
     JButton inputButton;
+    JButton buttonPL;
+    JButton buttonEN;
 
     // Bottom Panel
     JPanel bottomPanel;
@@ -25,18 +28,24 @@ public class WeatherFrame extends JFrame {
     int topPanelHeight;
     int bottomPanelHeight;
 
-    // Engine
+    // utilities.Engine
     Engine engine = new Engine();
 
+    URL iconURL = getClass().getResource("/Resources/icon.png");
+    ImageIcon img = new ImageIcon(iconURL);
 
-    public WeatherFrame(){
+    String lang = "en";
+
+
+    public CustomFrame(){
         initSettings();
         setContents();
         setVisible(true);
     }
 
     public void initSettings(){
-        setSize(350,190);
+        setIconImage(img.getImage());
+        setSize(350,250);
         setLocationRelativeTo(null);
         setLayout(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -82,13 +91,21 @@ public class WeatherFrame extends JFrame {
         bottomPanel.setLayout(null);
         bottomPanel.setBackground(new Color(53,47,68));
 
+        buttonPL = new CustomButton("PL", new Color(92,84,112), new Color(73,67,89));
+        buttonPL.setBounds(5, 5, 50, 20);
+        buttonPL.addActionListener(e -> lang = "pl");
+        buttonEN = new CustomButton("EN", new Color(92,84,112), new Color(73,67,89));
+        buttonEN.setBounds(60, 5, 50, 20);
+        buttonPL.addActionListener(e -> lang = "en");
+
         weatherLabel = new JLabel();
         weatherLabel.setFont(new Font("Arial", Font.PLAIN,14));
         weatherLabel.setForeground(new Color(250, 240, 230));
-        weatherLabel.setBounds(10,10,200,bottomPanelHeight-55);
+        weatherLabel.setBounds(10,35,200,bottomPanelHeight-55);
         weatherLabel.setHorizontalAlignment(JLabel.LEFT);
         weatherLabel.setVerticalAlignment(JLabel.TOP);
-
+        bottomPanel.add(buttonPL);
+        bottomPanel.add(buttonEN);
         bottomPanel.add(weatherLabel);
     }
 
@@ -105,41 +122,13 @@ public class WeatherFrame extends JFrame {
         inputField.setBorder(new EmptyBorder(0,5,0,5));
         inputField.setForeground(new Color(26,47,68));
 
-        inputButton = new JButton("Search");
-        inputButton.setSize(70,30);
+        inputButton = new CustomButton("Search", new Color(53,47,68), new Color(41,37,53));
         inputButton.setBounds(130,0,70,30);
-        inputButton.setBackground(new Color(53,47,68));
-        inputButton.setForeground(Color.white);
-        inputButton.setFont(new Font("Arial", Font.PLAIN, 11));
-        inputButton.setBorder(null);
-        inputButton.setBorderPainted(false);
-        inputButton.setUI(new BasicButtonUI() {
-            @Override
-            protected void paintButtonPressed(Graphics g, AbstractButton b) {
-
-            }
-            @Override
-            protected void paintFocus(Graphics g, AbstractButton b, Rectangle viewRect, Rectangle textRect, Rectangle iconRect) {
-
-            }
-        });
-
-        inputButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                inputButton.setBackground(new Color(41,37,53));
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                inputButton.setBackground(new Color(53,47,68));
-            }
-        });
         inputButton.addActionListener(e -> {
             String city = inputField.getText();
             String info;
             try {
-                info = engine.getInfo(city);
+                info = engine.getInfo(city, lang);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
@@ -149,4 +138,6 @@ public class WeatherFrame extends JFrame {
         inputPanel.add(inputField);
         inputPanel.add(inputButton);
     }
+
 }
+

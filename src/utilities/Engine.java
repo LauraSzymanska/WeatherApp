@@ -1,3 +1,5 @@
+package utilities;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -16,11 +18,12 @@ public class Engine {
     public Engine(){
     }
 
-    public String getInfo(String city) throws Exception {
+    public String getInfo(String city, String lang) throws Exception {
+
         String weatherInfo = "";
 
         // Tworzenie url
-        String urlString = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&appid=" + apiKey;
+        String urlString = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&lang=" + lang + "&units=metric&appid=" + apiKey;
         URL url = new URL(urlString);
 
         // Tworzenie polaczenia
@@ -36,7 +39,6 @@ public class Engine {
         while((line = reader.readLine()) != null){
             weatherInfo += line;
         }
-        // System.out.println(weatherInfo);
 
         // Serializacja danych
         JSONParser parser = new JSONParser();
@@ -62,6 +64,12 @@ public class Engine {
                 .get("main"))
                 .get("pressure")
                 .toString();
+        String wind_speed = ((JSONObject) weatherObject
+                .get("wind"))
+                .get("speed")
+                .toString();
+        Double wind_speed_kmh = Math.round(Double.parseDouble(wind_speed)*3.6 * 100.0) / 100.0;
+
         String weather_description = ((JSONObject) ((JSONArray) weatherObject
                 .get("weather"))
                 .get(0))
@@ -69,7 +77,26 @@ public class Engine {
                 .toString();
         String description = weather_description.substring(0,1).toUpperCase()+weather_description.substring(1);
 
-        String result = "<html>" + description + "<br/>Temperature: " + temp + "°C<br/>Min: " + temp_min + "°C Max: " + temp_max + "°C<br/>Pressure: " + pressure + "hPa</html>";
+        String result = "";
+        if(lang == "en") {
+            result = "<html>" + description +
+                    "<br/>Temperature: " + temp +
+                    "°C<br/><font color=#A69D94>Min: " + temp_min +
+                    "°C Max: " + temp_max +
+                    "°C<br/><font color=#faf0e6>" +
+                    "<br/>Wind speed: " + wind_speed_kmh +
+                    " km/h<br/>Pressure: " + pressure +
+                    " hPa</html>";
+        } else {
+            result = "<html>" + description +
+                    "<br/>Temperatura: " + temp +
+                    "°C<br/><font color=#A69D94>Min: " + temp_min +
+                    "°C Maks: " + temp_max +
+                    "°C<br/><font color=#faf0e6>" +
+                    "<br/>Prędkość wiatru: " + wind_speed_kmh +
+                    " km/h<br/>Ciśnienie: " + pressure +
+                    " hPa</html>";
+        }
 
         return result;
     }
