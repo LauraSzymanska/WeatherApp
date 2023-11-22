@@ -24,6 +24,7 @@ public class CustomFrame extends JFrame {
     // Bottom Panel
     private JPanel bottomPanel;
     private JLabel weatherLabel;
+    private JLabel weatherImage;
 
     // Height variables
     private int topPanelHeight;
@@ -40,10 +41,11 @@ public class CustomFrame extends JFrame {
 
     private final Color linenColor = new Color(250,240,230);
     private final Color lightBlueColor = new Color(92,84,112);
-    private final Color darkBlueColor = new Color(53,47,68);
 
-    private final Color darkerBlueColor = new Color(73,67,89);
-    private final Color darkestBlueColor = new Color(41,37,53);
+
+    private final Color dLightBlueColor = new Color(73,67,89);
+    private final Color darkBlueColor = new Color(53,47,68);
+    private final Color dDarkBlueColor = new Color(41,37,53);
 
 
 
@@ -110,7 +112,7 @@ public class CustomFrame extends JFrame {
             throw new RuntimeException(ex);
         }
 
-        buttonPL = new CustomButton("PL", lightBlueColor, darkerBlueColor);
+        buttonPL = new CustomButton("PL", lightBlueColor, dLightBlueColor);
         buttonPL.setBounds(5, 5, 50, 20);
         // Zmiana na polski
         buttonPL.addActionListener(e -> {
@@ -119,7 +121,7 @@ public class CustomFrame extends JFrame {
             inputButton.setText("Szukaj");
             setInfo(Objects.requireNonNullElse(userCity, "Warsaw"));
         });
-        buttonEN = new CustomButton("EN", lightBlueColor, darkerBlueColor);
+        buttonEN = new CustomButton("EN", lightBlueColor, dLightBlueColor);
         buttonEN.setBounds(60, 5, 50, 20);
         // Zmiana na angielski
         buttonEN.addActionListener(e -> {
@@ -133,12 +135,19 @@ public class CustomFrame extends JFrame {
         weatherLabel = new JLabel(defaultInfo);
         weatherLabel.setFont(new Font("Arial", Font.PLAIN,14));
         weatherLabel.setForeground(linenColor);
-        weatherLabel.setBounds(10,35,200,bottomPanelHeight-55);
+        weatherLabel.setBounds(10,35,200,130);
         weatherLabel.setHorizontalAlignment(JLabel.LEFT);
         weatherLabel.setVerticalAlignment(JLabel.TOP);
+
+        weatherImage = new JLabel(engine.getImage());
+        weatherImage.setBounds(210,40,100,100);
+
+
         bottomPanel.add(buttonPL);
         bottomPanel.add(buttonEN);
         bottomPanel.add(weatherLabel);
+        bottomPanel.add(weatherImage);
+
     }
 
     public void initInputPanel(){
@@ -153,7 +162,7 @@ public class CustomFrame extends JFrame {
         inputField.setBorder(new EmptyBorder(0,5,0,5));
         inputField.setForeground(new Color(26,47,68));
 
-        inputButton = new CustomButton("Search", darkBlueColor, darkestBlueColor);
+        inputButton = new CustomButton("Search", darkBlueColor, dDarkBlueColor);
         inputButton.setBounds(110,0,70,30);
         inputButton.addActionListener(e -> {
             userCity = inputField.getText();
@@ -173,6 +182,7 @@ public class CustomFrame extends JFrame {
             throw new RuntimeException(ex);
         }
         weatherLabel.setText(info);
+        weatherImage.setIcon(engine.getImage());
     }
 
 }

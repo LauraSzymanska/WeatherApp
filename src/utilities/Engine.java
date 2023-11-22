@@ -4,6 +4,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -15,6 +18,9 @@ import java.util.List;
 public class Engine {
 
     private final String apiKey = "4681417d9ec199c700797de62f6ce345";
+    private ImageIcon icon;
+
+    private String result;
     public Engine(){
     }
 
@@ -23,16 +29,16 @@ public class Engine {
         String weatherInfo = "";
 
         // Tworzenie url
-        String urlString = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&lang=" + lang + "&units=metric&appid=" + apiKey;
-        URL url = new URL(urlString);
+        String apiString = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&lang=" + lang + "&units=metric&appid=" + apiKey;
+        URL apiURL = new URL(apiString);
 
         // Tworzenie polaczenia
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
+        HttpURLConnection apiConnection = (HttpURLConnection) apiURL.openConnection();
+        apiConnection.setRequestMethod("GET");
 
         // Wczytywanie danych
         BufferedReader reader = new BufferedReader(
-                new InputStreamReader(connection.getInputStream())
+                new InputStreamReader(apiConnection.getInputStream())
         );
 
         String line;
@@ -79,7 +85,18 @@ public class Engine {
         String city_name = weatherObject
                 .get("name")
                 .toString();
-        String result = "";
+
+        String icon_id = ((JSONObject) ((JSONArray) weatherObject
+                .get("weather"))
+                .get(0))
+                .get("icon")
+                .toString();
+
+        String iconString = "https://openweathermap.org/img/wn/" + icon_id + "@2x.png";
+        URL iconURL = new URL(iconString);
+        Image image = ImageIO.read(iconURL);
+        icon = new ImageIcon(image);
+
         if(lang == "en") {
             result = "<html><font size=5><b>" + city_name +
                     "</b></font><br/>" + description +
@@ -103,6 +120,10 @@ public class Engine {
         }
 
         return result;
+    }
+
+    public ImageIcon getImage(){
+        return icon;
     }
 
     /*
