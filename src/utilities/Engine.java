@@ -8,21 +8,24 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class Engine {
-
-    private final String apiKey = "4681417d9ec199c700797de62f6ce345";
+    private final String apiKey;
     private ImageIcon icon;
 
     //private String result;
     private String[] languages = {"pl", "en"};
     private HashMap<String, String> result = new HashMap<>();
     public Engine(){
+        apiKey = readConfig().get("API_KEY");
     }
 
     public String getInfo(String city, String lang, boolean isLanguageChanged) throws Exception {
@@ -130,6 +133,23 @@ public class Engine {
 
     public ImageIcon getImage(){
         return icon;
+    }
+
+    public HashMap<String, String> readConfig(){
+        HashMap<String, String> config = new HashMap<>();
+        try {
+            Scanner sc = new Scanner(new File("./src/utilities/config.txt"));
+            String line = "";
+            String[] lineSplitted;
+            while (sc.hasNextLine()) {
+                line = sc.nextLine();
+                lineSplitted = line.replace(":", "").split(" ");
+                config.put(lineSplitted[0], lineSplitted[1]);
+            }
+        } catch(FileNotFoundException fnf){
+            System.err.println("Nie znaleziono pliku");
+        }
+        return config;
     }
 
     /*
