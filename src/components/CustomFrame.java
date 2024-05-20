@@ -2,6 +2,7 @@ package components;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.net.URL;
 import java.util.Objects;
@@ -107,7 +108,7 @@ public class CustomFrame extends JFrame {
 
         String defaultInfo;
         try {
-            defaultInfo = engine.getInfo("Warsaw", lang);
+            defaultInfo = engine.getInfo("Warsaw", lang, false);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
@@ -119,7 +120,7 @@ public class CustomFrame extends JFrame {
             lang = "pl";
             cityLabel.setText("Wpisz miasto");
             inputButton.setText("Szukaj");
-            setInfo(Objects.requireNonNullElse(userCity, "Warsaw"));
+            setInfo(Objects.requireNonNullElse(userCity, "Warsaw"), true);
         });
         buttonEN = new CustomButton("EN", lightBlueColor, dLightBlueColor);
         buttonEN.setBounds(60, 5, 50, 20);
@@ -128,7 +129,7 @@ public class CustomFrame extends JFrame {
             lang = "en";
             cityLabel.setText("Search city");
             inputButton.setText("Search");
-            setInfo(Objects.requireNonNullElse(userCity, "Warsaw"));
+            setInfo(Objects.requireNonNullElse(userCity, "Warsaw"), true);
 
         });
 
@@ -159,26 +160,29 @@ public class CustomFrame extends JFrame {
         inputField = new JTextField();
         inputField.setBounds(1,1,109,28);
         inputField.setBackground(linenColor);
+        //inputField.setBorder(new LineBorder(Color.blue));
         inputField.setBorder(new EmptyBorder(0,5,0,5));
+        //inputField.setMargin(new Insets(0, 5, 0, 0));
         inputField.setForeground(new Color(26,47,68));
 
         inputButton = new CustomButton("Search", darkBlueColor, dDarkBlueColor);
         inputButton.setBounds(110,0,70,30);
         inputButton.addActionListener(e -> {
             userCity = inputField.getText();
-            setInfo(userCity);
+            setInfo(userCity, false);
         });
 
         inputPanel.add(inputField);
         inputPanel.add(inputButton);
     }
 
-    public void setInfo(String city){
+    public void setInfo(String city, boolean isLanguageChanged){
 
         String info;
         try {
-            info = engine.getInfo(city, lang);
+            info = engine.getInfo(city, lang, isLanguageChanged);
         } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Złe wpisane miasto, wpisz ponownie");
             throw new RuntimeException(ex);
         }
         weatherLabel.setText(info);
