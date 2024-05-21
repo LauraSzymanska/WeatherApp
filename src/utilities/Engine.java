@@ -7,14 +7,13 @@ import org.json.simple.parser.JSONParser;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class Engine {
@@ -23,6 +22,7 @@ public class Engine {
 
     private String[] languages = {"pl", "en"};
     private HashMap<String, String> result = new HashMap<>();
+    private Properties langProperties;
     public Engine(){
         apiKey = readConfig().get("API_KEY");
     }
@@ -33,6 +33,7 @@ public class Engine {
                 result.clear();
             }
             for (String l : languages) {
+                loadLanguageProperties(l);
                 String weatherInfo = "";
                 // Tworzenie url
                 String apiString = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&lang=" + l + "&units=metric&appid=" + apiKey;
@@ -104,32 +105,41 @@ public class Engine {
                 Image image = ImageIO.read(iconURL);
                 icon = new ImageIcon(image);
 
-                if(l.equals("pl")){
-                    result.put("pl", "<html><font size=5><b>" + city_name +
-                            "</b></font><br/>" + description +
-                            "<br/>Temperatura: " + temp +
-                            "°C<br/><font color=#A69D94>Min: " + temp_min +
-                            "°C Maks: " + temp_max +
-                            "°C<br/><font color=#faf0e6>" +
-                            "<br/>Prędkość wiatru: " + wind_speed_kmh +
-                            " km/h<br/>Ciśnienie: " + pressure +
-                            " hPa</html>");
-                } else {
-                    result.put("en", "<html><font size=5><b>" + city_name +
-                            "</b></font><br/>" + description +
-                            "<br/>Temperature: " + temp +
-                            "°C<br/><font color=#A69D94>Min: " + temp_min +
-                            "°C Max: " + temp_max +
-                            "°C<br/><font color=#faf0e6>" +
-                            "<br/>Wind speed: " + wind_speed_kmh +
-                            " km/h<br/>Pressure: " + pressure +
-                            " hPa</html>");
-                }
+                String formattedText = String.format(
+                        "<html>" +
+                                "<font size=5><b>" +
+                                city_name +
+                                "</b></font><br/>" +
+                                description +
+                                "<br/>" +
+                                langProperties.getProperty("temperature") + temp +"°C" +
+                                "<br/><font color=#A69D94>" +
+                                langProperties.getProperty("min") + temp_min + "°C " +
+                                langProperties.getProperty("max") + temp_max + "°C" +
+                                "<br/><font color=#faf0e6><br/>" +
+                                langProperties.getProperty("wind_speed") + wind_speed_kmh + " km/h<br/>" +
+                                langProperties.getProperty("pressure") + pressure + " hPa" +
+                                "</html>"
+                );
 
+                result.put(l, formattedText);
             }
         }
         return result.get(lang);
     }
+
+    private void loadLanguageProperties(String lang) throws Exception {
+        langProperties = new Properties();
+        String propertiesFileName = "Resources/language_" + lang + ".properties";
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propertiesFileName)) {
+            if (inputStream != null) {
+                langProperties.load(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            } else {
+                System.err.println("Nie znaleziono pliku");
+            }
+        }
+    }
+
 
     public ImageIcon getImage(){
         return icon;
