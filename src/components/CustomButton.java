@@ -10,7 +10,6 @@ public class CustomButton extends JButton {
 
     public CustomButton(String text, Color bgColor, Color bgColorPressed){
         setText(text);
-        //setSize(width,heigth);
         setBackground(bgColor);
         setForeground(Color.white);
         setFont(new Font("Arial", Font.PLAIN, 11));

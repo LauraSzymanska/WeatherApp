@@ -21,7 +21,6 @@ public class Engine {
     private final String apiKey;
     private ImageIcon icon;
 
-    //private String result;
     private String[] languages = {"pl", "en"};
     private HashMap<String, String> result = new HashMap<>();
     public Engine(){
@@ -52,6 +51,7 @@ public class Engine {
                 while ((line = reader.readLine()) != null) {
                     weatherInfo += line;
                 }
+                reader.close();
 
                 // Serializacja danych
                 JSONParser parser = new JSONParser();
@@ -146,6 +146,7 @@ public class Engine {
                 lineSplitted = line.replace(":", "").split(" ");
                 config.put(lineSplitted[0], lineSplitted[1]);
             }
+            sc.close();
         } catch(FileNotFoundException fnf){
             System.err.println("Nie znaleziono pliku");
         }
