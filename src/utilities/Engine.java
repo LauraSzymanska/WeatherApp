@@ -20,11 +20,12 @@ public class Engine {
     private final String apiKey;
     private ImageIcon icon;
 
-    private String[] languages = {"pl", "en"};
+    private final String[] languages;
     private HashMap<String, String> result = new HashMap<>();
     private Properties langProperties;
     public Engine(){
         apiKey = readConfig().get("API_KEY");
+        languages = readConfig().get("LANGUAGES").split(",");
     }
 
     public String getInfo(String city, String lang, boolean isLanguageChanged) throws Exception {
